@@ -8,12 +8,15 @@ enum class StatusVaga {
 }
 
 @Entity
+@Table(uniqueConstraints = [
+  UniqueConstraint(columnNames = ["numeroVaga", "setor"])
+])
 class Vaga(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   val id: Long? = null,
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   val numeroVaga: String,
 
   @Enumerated(EnumType.STRING)
