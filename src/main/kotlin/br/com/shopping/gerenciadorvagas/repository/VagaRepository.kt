@@ -9,4 +9,6 @@ interface VagaRepository : JpaRepository<Vaga, Long> {
   fun findByStatus(status: StatusVaga): List<Vaga>
 
   fun findBySetor(setor: String): List<Vaga>
+
+  fun findByPlacaVeiculo(placaVeiculo: String) : Vaga?
 }

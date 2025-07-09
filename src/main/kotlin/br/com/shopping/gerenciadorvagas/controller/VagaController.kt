@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.http.ResponseEntity
 import org.springframework.http.HttpStatus
 
@@ -49,4 +50,30 @@ class VagaController(private val vagaService: VagaService) {
     fun listarVagasPorSetor(@PathVariable setor: String): ResponseEntity<List<Vaga>> {
         return ResponseEntity.ok(vagaService.listarPorSetor(setor))
     }
+
+    @GetMapping("/placa/{placa}")
+    fun buscarVagaPorPlaca(@PathVariable placa: String): ResponseEntity<Any> {
+        return try {
+            val vaga = vagaService.buscarPorPlaca(placa)
+            ResponseEntity.ok(vaga)
+        } catch(e: Exception) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.message)
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    fun deletarVaga(@PathVariable id: Long): ResponseEntity<Any> {
+        return try {
+            vagaService.deletarVaga(id)
+            // 204 No Content é a resposta padrão para um DELETE bem-sucedido
+            ResponseEntity.noContent().build()
+        } catch (e: IllegalStateException) {
+            // 400 Bad Request se a regra de negócio for violada
+            ResponseEntity.badRequest().body(e.message)
+        } catch (e: Exception) {
+            // 404 Not Found se a vaga não existir
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.message)
+        }
+    }
+
 }

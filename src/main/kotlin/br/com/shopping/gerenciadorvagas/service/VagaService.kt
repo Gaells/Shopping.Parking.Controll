@@ -61,4 +61,22 @@ class VagaService(private val vagaRepository: VagaRepository) {
         return vagaRepository.findBySetor(setor)
     }
 
+    @Transactional(readOnly = true)
+    fun buscarPorPlaca(placa: String): Vaga {
+        return vagaRepository.findByPlacaVeiculo(placa)
+        ?: throw Exception("Veículo com a placa $placa não encontrado no estacionamento.")
+    }
+
+    @Transactional
+    fun deletarVaga(id: Long) {
+        val vaga = vagaRepository.findById(id)
+            .orElseThrow { Exception("Vaga com ID $id não encontrada.") }
+        
+        if(vaga.status == StatusVaga.OCUPADA) {
+            throw IllegalStateException("Não é possível deletar uma vaga que está ocupada.")
+        }
+
+        vagaRepository.delete(vaga)
+    }
+
 }
